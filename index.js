@@ -5,8 +5,7 @@ import dotenv from "dotenv";
 
 const app = express();
 
-// const PORT = process.env.PORT;
-const PORT =4000
+const PORT = process.env.PORT;
     app.use(express.json());
     dotenv.config();
     console.log(process.env);
@@ -50,5 +49,30 @@ console.log(data);
 const result = await client.db("b33wd").collection("movies").insertMany(data);
 res.send(result);
 });
+app.delete('/movies/:id', async function (req, res) {
+  const {id} = req.params;
+  // const movie =movies.find((m)=>m.id == id);
+  const movie = await client
+  .db("b33wd")
+  .collection("movies")
+  .deleteOne({id:id});
+  movie.deletedCount>0 ? res.send(movie)
+  :res.status(404).send("no movies found");
+  });
+
+
+  app.put('/movies/:id', async function (req, res) {
+    const data = req.body;
+
+    const {id} = req.params;
+    // const movie =movies.find((m)=>m.id == id);
+    const result = await client
+    .db("b33wd")
+    .collection("movies")
+    .updateOne({id:id},{$set:data});
+     req.send(result);
+    });
+    
+  
 
 app.listen(PORT,()=>console.log("start"));
